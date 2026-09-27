@@ -3,11 +3,10 @@ import math
 
 import pytest
 import verifiers as vf
-
 from synthetic_hospital import load_environment
 from synthetic_hospital.aggregate import aggregate
 from synthetic_hospital.data import TASKS, asset, canonical_split, load_rows, manifest
-from synthetic_hospital.scoring import answer_text, parse, score_completion, score_predictions
+from synthetic_hospital.scoring import answer_text, score_completion, score_predictions
 
 
 def test_split_membership_and_counts():
