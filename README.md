@@ -9,7 +9,7 @@ Open-source LLM benchmark suite for medical tasks.
 
 [medmarks.ai](https://medmarks.ai) | [arXiv:2605.01417](https://arxiv.org/abs/2605.01417)
 
-Medmarks is a comprehensive benchmark suite for evaluating medical capabilities in large language models. It includes 30 open-source benchmarks spanning question answering, information extraction, consumer health questions, clinical reasoning, EHR interactions, medical calculations, and open-ended medical tasks.
+Medmarks is a comprehensive benchmark suite for evaluating medical capabilities in large language models. It includes 31 open-source benchmarks spanning question answering, information extraction, consumer health questions, clinical reasoning, EHR interactions, medical calculations, and open-ended medical tasks.
 
 This repository contains the runnable benchmark environments, evaluation configs, result processing tools, and win-rate analysis pipeline used for Medmarks. It also contains the [`medarc_verifiers` Python library](docs/README.md), which provides the shared CLI, parsers, rewards, judging utilities, and orchestration helpers used by the benchmark environments.
 
@@ -30,6 +30,7 @@ The benchmark suite is implemented as [verifiers](https://github.com/primeintell
 | [`configs/medmarks-verified.toml`](configs/medmarks-verified.toml) | Medmarks-V suite |
 | [`configs/medmarks-open_ended.toml`](configs/medmarks-open_ended.toml) | Medmarks-OE suite |
 | [`configs/medmarks-endpoints.toml`](configs/medmarks-endpoints.toml) | Portable model aliases and sampling defaults for Medmarks runs |
+| [`configs/synthetic-hospital.toml`](configs/synthetic-hospital.toml) | Synthetic Hospital only: five clinical task variants |
 | [`configs/medmarks-smoke.toml`](configs/medmarks-smoke.toml) | Small Medmarks-V sanity-check run |
 
 ## Quick Start
@@ -134,6 +135,7 @@ Evaluation outputs are written under `runs/evals/`, processed parquet files unde
 | PubMedQA | Yes/no/maybe question answering requiring reasoning over biomedical research abstracts, labeled subset. | MIT | 500 | 211,269 |
 | SCTPublic | Script Concordance Tests evaluating clinical reasoning under diagnostic uncertainty. | MIT | 174 | -- |
 | SuperGPQA-Med | Graduate-level questions spanning 6 medical fields, easy and hard difficulty subsets. | ODC-BY | 1,126 | -- |
+| Synthetic Hospital | Five synthetic EHR tasks: diagnosis, summarization, specialty summarization, retrieval, and imaging. Patient-disjoint tuning splits; original public leaderboard split. | MIT | 1,859 | 6,871 (+748 validation) |
 | **Medmarks-OE (Open-Ended)** | | | | |
 | ACI-Bench | Clinical dialogue transcripts paired with corresponding structured clinical notes. | CC-BY-4.0 | 210 | 114 |
 | AgentClinic | Multimodal multi-agent OSCE-style clinical dialogues for interactive diagnostic reasoning evaluation. | MIT | 214 | -- |

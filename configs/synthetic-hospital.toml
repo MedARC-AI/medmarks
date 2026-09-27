@@ -1,0 +1,33 @@
+# Set a model and endpoint via your Medmarks CLI/configuration.
+model = "google/gemma-3-27b-it"
+api_client_type = "openai_chat_completions"
+max_tokens = 16384
+sampling_args = { temperature = 0.0 }
+save_results = true
+num_examples = -1
+rollouts_per_example = 1
+
+[[eval]]
+env_id = "synthetic-hospital"
+name = "patient-diagnosis"
+env_args = {task = "patient_diagnosis", split = "public"}
+
+[[eval]]
+env_id = "synthetic-hospital"
+name = "summarization"
+env_args = {task = "summarization", split = "public"}
+
+[[eval]]
+env_id = "synthetic-hospital"
+name = "specialty-summarization"
+env_args = {task = "specialty_summarization", split = "public"}
+
+[[eval]]
+env_id = "synthetic-hospital"
+name = "retrieval"
+env_args = {task = "retrieval", split = "public"}
+
+[[eval]]
+env_id = "synthetic-hospital"
+name = "imaging"
+env_args = {task = "imaging", split = "public"}
