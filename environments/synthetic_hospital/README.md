@@ -106,6 +106,20 @@ synthetic-hospital-score /path/to/results.jsonl \
   --task specialty_summarization --split public --output specialty-scores.json
 ```
 
+For all five tasks from the Gemma command above, combine only that model's task
+files and score the complete public suite:
+
+```bash
+cat outputs/synthetic-hospital/gemma/*/synthetic-hospital/*/results.jsonl \
+  > outputs/synthetic-hospital/gemma/all-tasks.jsonl
+uv run synthetic-hospital-score outputs/synthetic-hospital/gemma/all-tasks.jsonl \
+  --task all --split public --output outputs/synthetic-hospital/gemma/scores.json
+```
+
+Use the corresponding Kimi directory for its scores. Do not combine different
+models into one file. The standard `medarc-eval process` workflow still works,
+but mean rollout rewards are training diagnostics, not the headline specialty F1.
+
 It requires full coverage by default, rejects unknown IDs and unequal replicate
 counts, and uses trusted packaged references. Use `--allow-partial` for smoke
 runs only. Multiple rollouts are scored as separate complete replicates (in
