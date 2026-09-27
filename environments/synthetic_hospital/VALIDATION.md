@@ -51,3 +51,24 @@ check payload isolation, original/derived split loading, patient disjointness an
 outputs, chart-neutral scoring, coverage enforcement, and the specialty aggregate
 harmonic-mean distinctions for diagnosis and specialty summarization. The existing repository evaluation suite has 33 passing
 tests. No new paid model inference was required for these checks.
+
+## Independent reference scoring
+
+Fresh Medmarks outputs can be checked with the original Synthetic Hospital
+checkout and database. This optional audit uses the original prompt formatters,
+parsers and scorers, and an actual PostgreSQL JSONB round trip. It does not import
+the portable scorer or reuse its frozen references.
+
+```bash
+# Run with the original Synthetic Hospital checkout's Python dependencies.
+DATABASE_URL=postgresql://... /path/to/synthetic_hospital/.venv/bin/python \
+  environments/synthetic_hospital/validation/score_original.py \
+  --source /path/to/synthetic_hospital \
+  --run-root outputs/synthetic-hospital/gemma --output original-scores.json
+```
+
+The helper requires full public coverage, checks every saved prompt against the
+original formatter, and reports API errors separately. Compare its metrics with
+`synthetic-hospital-score` on the same new completions. Changes versus an earlier
+model run are a separate comparison: fresh generation can produce different
+answers even with the same checkpoint and sampling settings.
