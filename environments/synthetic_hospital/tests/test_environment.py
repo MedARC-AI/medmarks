@@ -295,3 +295,17 @@ def test_structured_summary_scoring_matches_persisted_jsonb_order():
     assert unnormalized["hallucination_rate"] != expected["hallucination_rate"]
     for name, value in expected.items():
         assert actual[name] == value
+
+
+def test_diagnosis_f1_requires_corpus_aggregation():
+    gt = {"active_diagnoses": [], "chronic_conditions": [{"icd10": "E11"}, {"icd10": "F32"}]}
+    info = {"task_name": "patient_diagnosis", "ground_truth": gt}
+    predictions = [
+        {"chronic_conditions": [{"icd10": c} for c in ("E11", "F32", "G40", "J45")]},
+        {"chronic_conditions": [{"icd10": "E11"}]},
+    ]
+    corpus = score_predictions("patient_diagnosis", predictions, [info, info])
+    individual = [score_predictions("patient_diagnosis", [p], [info]) for p in predictions]
+    key = "weighted_problem_list_f1_neutral"
+    assert corpus[key] == pytest.approx(0.75)
+    assert sum(m[key] for m in individual) / 2 == pytest.approx(2 / 3)

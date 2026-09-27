@@ -45,9 +45,9 @@ on that order. The portable scorer now reproduces JSONB ordering without a datab
 all 3,718 parsed predictions match their persisted serialization exactly. A regression
 test covers the resulting text-metric difference.
 
-The package test suite has 26 tests, including five actual Verifiers generation
+The package test suite has 27 tests, including five actual Verifiers generation
 and saved-result round trips using a mocked OpenAI-compatible transport. They
 check payload isolation, original/derived split loading, patient disjointness and deterministic selection, malformed
 outputs, chart-neutral scoring, coverage enforcement, and the specialty aggregate
-harmonic-mean distinction. The existing repository evaluation suite has 33 passing
+harmonic-mean distinctions for diagnosis and specialty summarization. The existing repository evaluation suite has 33 passing
 tests. No new paid model inference was required for these checks.

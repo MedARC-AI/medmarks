@@ -96,7 +96,11 @@ F1 for diagnosis, finding recall for summarization, conditioned F1 for involved
 specialties / abstention accuracy for absent specialties, P@5 for retrieval, and
 concept F1 for imaging. Additional rubric metrics have zero reward weight.
 
-**The average reward is not the paper's aggregate score.** In particular, specialty
+**The average reward is not the paper's aggregate score.** Diagnosis F1 is the
+harmonic mean of aggregate severity-weighted recall and chart-neutral precision.
+The original diagnosis scorer excludes empty diagnosis lists from those means
+and reports them through `n_tier_c`; rollout rewards for those cases are zero.
+Specialty
 conditioned F1 is a harmonic mean of aggregate critical-finding recall and
 one minus aggregate leakage, over involved cases only. Absent cases are reported
 separately. Use the exact aggregate scorer on Verifiers `results.jsonl`:
@@ -118,7 +122,7 @@ uv run synthetic-hospital-score outputs/synthetic-hospital/gemma/all-tasks.jsonl
 
 Use the corresponding Kimi directory for its scores. Do not combine different
 models into one file. The standard `medarc-eval process` workflow still works,
-but mean rollout rewards are training diagnostics, not the headline specialty F1.
+but mean rollout rewards are training diagnostics, not the headline diagnosis or specialty F1.
 
 It requires full coverage by default, rejects unknown IDs and unequal replicate
 counts, and uses trusted packaged references. Use `--allow-partial` for smoke
