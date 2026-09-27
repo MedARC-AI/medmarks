@@ -1,0 +1,145 @@
+{
+  "cases": 1859,
+  "exact_prompts": 1859,
+  "api_errors": 0,
+  "matched_original_scorer_metrics": 60,
+  "max_scorer_difference": 0.0,
+  "metrics": {
+    "patient_diagnosis": {
+      "problem_list_recall": 0.32990476190476187,
+      "problem_list_precision": 0.17937072078248548,
+      "problem_list_f1": 0.23238996159872743,
+      "weighted_problem_list_recall": 0.3209372016872017,
+      "weighted_problem_list_f1": 0.23012522731352575,
+      "problem_list_precision_neutral": 0.24415411385999622,
+      "problem_list_f1_neutral": 0.2806248912839997,
+      "weighted_problem_list_f1_neutral": 0.2773291180621619,
+      "n_neutral_predictions": 341,
+      "icd10_specificity_score": 0.8038342082239719,
+      "acuity_accuracy": 0.680672268907563,
+      "acuity_confusion_matrix": {
+        "acute:acute_on_chronic": 19,
+        "acute:chronic": 28,
+        "chronic:chronic": 112,
+        "chronic:acute_on_chronic": 19,
+        "acute:acute": 50,
+        "chronic:acute": 10
+      },
+      "n_scored": 200,
+      "n_tier_c": 0,
+      "n_predictions": 200,
+      "parse_failures": 0
+    },
+    "summarization": {
+      "rouge_l": 0.27832434391627636,
+      "clinical_f1": 0.37890345900659367,
+      "omission_rate": 0.6210965409934064,
+      "mean_summary_words": 127.99,
+      "hallucination_rate": 0.003214285714285714,
+      "n_predictions": 200,
+      "parse_failures": 0
+    },
+    "retrieval": {
+      "ndcg_10": 0.7295111681814174,
+      "map_10": 0.8096088293650794,
+      "recall_5": 0.2036809681454118,
+      "recall_10": 0.39325705698519436,
+      "recall_20": 0.6346808342591399,
+      "precision_5": 0.8860000000000001,
+      "mrr": 0.9473809523809524,
+      "n_predictions": 200,
+      "parse_failures": 1
+    },
+    "imaging": {
+      "clinical_question_f1": 0.4096793845215522,
+      "summary_rouge_l": 0.3728248244196118,
+      "differential_coverage": 0.35205314009661837,
+      "findings_recall": 0.21503623188405796,
+      "clinical_question_concept_f1": 0.4122862386157815,
+      "clinical_question_concept_precision": 0.40566932061497274,
+      "clinical_question_concept_recall": 0.45511728609554697,
+      "n_predictions": 276,
+      "parse_failures": 0
+    },
+    "specialty_summarization": {
+      "n_involved": 583,
+      "n_absent": 400,
+      "mean_summary_words": 147.37232960325534,
+      "primary_recall_critical": 0.263554298203421,
+      "primary_recall_complete": 0.24426719248873263,
+      "primary_recall_critical_lexical": 0.25669919748867115,
+      "relevant_recall_critical": 0.1388888888888889,
+      "relevant_recall_complete": 0.19561561804208866,
+      "leakage_rate": 0.137888344364248,
+      "leakage_rate_strict": 0.13858130814396286,
+      "conditioned_f1": 0.4026533874807344,
+      "conditioned_f1_complete": 0.3780765545638466,
+      "value_normalizer_credits": 29,
+      "omission_rate": 0.7557328075112674,
+      "hallucination_rate": 0.0058691245791304735,
+      "abstention_accuracy": 0.235,
+      "absent_leakage_rate": 0.15702524558774558,
+      "n_predictions": 983,
+      "parse_failures": 0
+    }
+  },
+  "headline_comparison": [
+    {
+      "task": "Patient dx",
+      "metric": "weighted_problem_list_f1_neutral",
+      "previous": 0.27520212336231814,
+      "fresh_medmarks": 0.2773291180621619,
+      "difference": 0.0021269946998437317
+    },
+    {
+      "task": "Summarization",
+      "metric": "clinical_f1",
+      "previous": 0.383172643554416,
+      "fresh_medmarks": 0.37890345900659367,
+      "difference": -0.0042691845478223245
+    },
+    {
+      "task": "Specialty summarization",
+      "metric": "conditioned_f1",
+      "previous": 0.37964391325846036,
+      "fresh_medmarks": 0.4026533874807344,
+      "difference": 0.023009474222274062
+    },
+    {
+      "task": "Retrieval P@5",
+      "metric": "precision_5",
+      "previous": 0.889,
+      "fresh_medmarks": 0.8860000000000001,
+      "difference": -0.0029999999999998916
+    },
+    {
+      "task": "Retrieval NDCG@10",
+      "metric": "ndcg_10",
+      "previous": 0.733211689470937,
+      "fresh_medmarks": 0.7295111681814174,
+      "difference": -0.003700521289519587
+    },
+    {
+      "task": "Imaging",
+      "metric": "clinical_question_concept_f1",
+      "previous": 0.41137853135956925,
+      "fresh_medmarks": 0.4122862386157815,
+      "difference": 0.0009077072562122535
+    }
+  ],
+  "unchanged_final_answers_vs_previous": {
+    "same": 687,
+    "total": 1859
+  },
+  "model": "google/gemma-3-27b-it",
+  "model_revision": "005ad3404e59d6023443cb575daa05336842228a",
+  "sampling": {
+    "temperature": 0.0,
+    "max_tokens": 16384,
+    "max_concurrent": 16
+  },
+  "input_token_counts_matching_previous": 1859,
+  "mode": "fresh model generation through medarc-eval bench; no replay",
+  "vllm_version": "0.20.0",
+  "hardware": "2 x H100 80GB, BF16, tensor parallel 2"
+}

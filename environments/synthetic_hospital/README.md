@@ -24,7 +24,7 @@ export VLLM_API_KEY=local-key
 uv run medarc-eval bench --config configs/synthetic-hospital.toml \
   --model google/gemma-3-27b-it --provider local \
   --api-base-url http://HOST:8000/v1 --api-key-var VLLM_API_KEY \
-  --max-concurrent 16 --output-dir outputs/synthetic-hospital/gemma
+  --max-concurrent 16 --timeout 600 --output-dir outputs/synthetic-hospital/gemma
 ```
 
 The config runs all 1,859 public cases across five task variants, one rollout per
@@ -38,7 +38,7 @@ For Kimi K2.5 thinking, use its endpoint and override sampling:
 uv run medarc-eval bench --config configs/synthetic-hospital.toml \
   --model moonshotai/Kimi-K2.5 --provider local \
   --api-base-url http://HOST:8000/v1 --api-key-var VLLM_API_KEY \
-  --max-concurrent 32 --output-dir outputs/synthetic-hospital/kimi \
+  --max-concurrent 32 --timeout 1800 --output-dir outputs/synthetic-hospital/kimi \
   --sampling-args '{"temperature":1.0,"top_p":0.95,"seed":42,"extra_body":{"chat_template_kwargs":{"thinking":true}}}'
 ```
 
