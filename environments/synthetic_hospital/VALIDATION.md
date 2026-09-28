@@ -1,74 +1,68 @@
-# Validation record
+# Fresh-generation validation
 
-Tested against Medmarks commit `154710b74e01fb203b5ccf47312dc73d27cd04b4`
-and Verifiers 0.1.14, Python 3.12, on 2026-09-27.
+Tested on 2026-09-27–28 from a fresh Medmarks clone and Python 3.12 virtual
+environment. Base commit: `154710b74e01fb203b5ccf47312dc73d27cd04b4`.
+Medmarks 0.2.0, Verifiers 0.1.14, Synthetic Hospital environment 0.2.0, vLLM 0.20.0.
 
-Package version 0.2.0 preserves the original `train`, `public`, and `heldout`
-partitions. An additional deterministic 80-patient validation subset is reserved
-from `train`; the other 720 patients form the default training dataset `train_fit`.
+## Workflow
 
-The full saved Gemma 3 27B and Kimi K2.5 thinking public runs were replayed:
+Followed the repository setup: `uv venv --python 3.12`, `uv sync`, then
+`uv run vf-install synthetic-hospital`. Both models ran the documented
+`medarc-eval bench --config configs/synthetic-hospital.toml` commands from the
+environment README, with the default Verifiers environment server enabled.
+Each model used a fresh output directory and a newly launched vLLM server.
+Cached checkpoint weights were reused; model completions were generated afresh.
 
-- 1,859 examples per model, all five tasks.
-- All 55 reproducible aggregate metrics per model matched within 1e-12,
-  including nested diagnosis metrics. Provider latency, token totals and
-  latency-adjusted retrieval are excluded from scorer parity.
-- All 1,859 parsed predictions per model matched the original parser outputs.
-- All 1,859 Kimi request prompts matched the packaged prompts byte-for-byte.
-  Gemma has saved final answers but no full request traces, so no equivalent
-  request-byte comparison is claimed for Gemma.
+- Two fresh smoke examples per task, then all 1,859 public cases per model.
+- 1,869 successful live generation calls per model: 10 smoke + 1,859 full.
+- Zero API errors; all expected IDs covered exactly once in each full run.
+- All 1,859 prompt messages matched the original formatter outputs per model.
+- All 1,859 input-token counts matched the previous run per model.
+- The bundled corpus scorer matched all 60 returned metric/counter fields from
+  an independent original-harness computation, including nested diagnosis metrics.
+  Maximum numeric difference: **0 for both models**.
+- 27 environment tests pass. Authored Python code passes Ruff.
+- Standard `medarc-eval process` was also exercised on the new environment outputs.
 
-| Primary metric | Gemma | Kimi |
-|---|---:|---:|
-| Diagnosis weighted chart-neutral F1 | 0.27520212336231814 | 0.7004381160820069 |
-| Summarization finding recall | 0.383172643554416 | 0.454662003330347 |
-| Specialty conditioned F1 | 0.37964391325846036 | 0.5764015811612511 |
-| Retrieval P@5 | 0.889 | 0.851 |
-| Retrieval NDCG@10 | 0.733211689470937 | 0.6846936386165282 |
-| Imaging concept F1 | 0.41137853135956925 | 0.49887004640317895 |
+## Scores versus the previous local vLLM runs
 
-The full CLI replay script is `scripts/replay_medmarks.py`; it runs all five tasks
-through `medarc-eval bench` against a local OpenAI-compatible response server,
-saves Medmarks results, and applies `synthetic-hospital-score` aggregation. Its
-machine-readable report is `comparison.json` in the requested output directory.
-The additional `scripts/verify_medmarks_parity.py` checks scorers directly. Saved model runs are local
-artifacts and are not required to install the environment or run its unit tests.
+Fresh generation changes answers, so the model scores are not identical to the
+previous runs. Scorer parity compares both implementations on the same new
+answers; that comparison is exact. These are public-split corpus scores.
 
-The Medmarks environment-specific CLI detects `--task`, `--split`, and
-`--training-split`. The five-variant TOML evaluates `public` with separate output
-identities. This is saved-response replay, not new stochastic model inference.
+| Metric | Gemma previous | Gemma fresh | Kimi previous | Kimi fresh |
+|---|---:|---:|---:|---:|
+| Patient dx | 0.275202 | 0.277329 | 0.700438 | 0.691953 |
+| Summarization | 0.383173 | 0.378903 | 0.454662 | 0.449322 |
+| Specialty summarization | 0.379644 | 0.402653 | 0.576402 | 0.579872 |
+| Retrieval P@5 | 0.889000 | 0.886000 | 0.851000 | 0.849000 |
+| Retrieval NDCG@10 | 0.733212 | 0.729511 | 0.684694 | 0.670405 |
+| Imaging | 0.411379 | 0.412286 | 0.498870 | 0.504797 |
 
-The full CLI check exposed a secondary specialty hallucination-rate discrepancy:
-the original runner stores parsed predictions in PostgreSQL JSONB before scoring,
-which reorders nested object keys. Structured summary fallback rendering depends
-on that order. The portable scorer now reproduces JSONB ordering without a database;
-all 3,718 parsed predictions match their persisted serialization exactly. A regression
-test covers the resulting text-metric difference.
+Full precision metrics, sampling settings, checkpoint revisions and hardware:
+[Gemma](validation/gemma-fresh.json), [Kimi](validation/kimi-fresh.json).
 
-The package test suite has 27 tests, including five actual Verifiers generation
-and saved-result round trips using a mocked OpenAI-compatible transport. They
-check payload isolation, original/derived split loading, patient disjointness and deterministic selection, malformed
-outputs, chart-neutral scoring, coverage enforcement, and the specialty aggregate
-harmonic-mean distinctions for diagnosis and specialty summarization. The existing repository evaluation suite has 33 passing
-tests. No new paid model inference was required for these checks.
+Diagnosis and specialty F1 require corpus aggregation; mean rollout rewards
+are training diagnostics. Use `synthetic-hospital-score` as documented in the
+[README](README.md). Summarization `clinical_f1` is finding recall.
+Provider latency and cost are not part of scorer parity.
 
 ## Independent reference scoring
 
-Fresh Medmarks outputs can be checked with the original Synthetic Hospital
-checkout and database. This optional audit uses the original prompt formatters,
-parsers and scorers, and an actual PostgreSQL JSONB round trip. It does not import
-the portable scorer or reuse its frozen references.
+The audit imports the original Synthetic Hospital prompt formatters, parsers and
+scorers, loads references from its database, and performs a real PostgreSQL JSONB
+round trip for parsed predictions. It does not use the port’s frozen references
+or scoring implementation. This checks the portable scorer’s JSONB key-order
+compatibility for structured summaries, along with every other returned metric.
 
 ```bash
-# Run with the original Synthetic Hospital checkout's Python dependencies.
+# Run with the original checkout’s dependencies and loaded benchmark database.
 DATABASE_URL=postgresql://... /path/to/synthetic_hospital/.venv/bin/python \
   environments/synthetic_hospital/validation/score_original.py \
   --source /path/to/synthetic_hospital \
   --run-root outputs/synthetic-hospital/gemma --output original-scores.json
 ```
 
-The helper requires full public coverage, checks every saved prompt against the
-original formatter, and reports API errors separately. Compare its metrics with
-`synthetic-hospital-score` on the same new completions. Changes versus an earlier
-model run are a separate comparison: fresh generation can produce different
-answers even with the same checkpoint and sampling settings.
+The helper requires full public coverage, verifies every prompt, and reports API
+errors separately. Compare its metrics with `synthetic-hospital-score` on the
+same completions. Raw model answers and local cluster logs are kept outside git.

@@ -138,8 +138,11 @@
     "max_tokens": 16384,
     "max_concurrent": 16
   },
-  "input_token_counts_matching_previous": 1859,
+  "hardware": "2 x H100 80GB, BF16, tensor parallel 2",
+  "max_model_len": 131072,
   "mode": "fresh model generation through medarc-eval bench; no replay",
   "vllm_version": "0.20.0",
-  "hardware": "2 x H100 80GB, BF16, tensor parallel 2"
+  "input_token_counts_matching_previous": 1859,
+  "live_api_successes": 1869,
+  "smoke_cases": 10
 }
